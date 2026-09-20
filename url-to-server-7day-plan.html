@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>From URL to Server — A 7-Day Plan for SEOs</title>
+<style>
+:root{
+  --bg:#0f1720; --panel:#141f2b; --panel2:#1a2733; --line:#25384a;
+  --ink:#e8eef4; --muted:#9db0c2; --accent:#ffb454; --accent2:#5ecbb0;
+  --p-url:#ffb454; --p-dns:#5ecbb0; --p-tcp:#7aa2ff; --p-tls:#c792ea; --p-srv:#ff7a92; --p-dl:#8bd450;
+  --off:#e34d4d; --est:#4d9be3; --ind:#b0b8c1;
+  font-family: "Segoe UI", ui-sans-serif, system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+}
+:root:not([data-theme="light"]){ }
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f6f7f9; --panel:#ffffff; --panel2:#eef1f5; --line:#dbe2e9;
+    --ink:#131a22; --muted:#57687a;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f6f7f9; --panel:#ffffff; --panel2:#eef1f5; --line:#dbe2e9;
+  --ink:#131a22; --muted:#57687a;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top: calc(70px + env(safe-area-inset-top,0px));}
+body{
+  margin:0; background:var(--bg); color:var(--ink); line-height:1.6;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+a{color:var(--accent2)}
+h1,h2,h3,h4{font-family: Georgia, "Times New Roman", serif; font-weight:600; line-height:1.2; margin:0 0 .5rem}
+p{margin:.4rem 0 .9rem; max-width:70ch}
+code{background:var(--panel2); padding:.1rem .4rem; border-radius:4px; font-size:.92em}
+.wrap-x{overflow-x:auto}
+
+/* top bar */
+header.top{
+  position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+  padding: env(safe-area-inset-top,0px) 0 0 0;
+}
+.topbar{display:flex; align-items:center; gap:1rem; padding:.7rem 1.2rem; max-width:1180px; margin:0 auto; flex-wrap:wrap}
+.topbar .brand{font-family:Georgia,serif; font-weight:700; font-size:1.05rem; white-space:nowrap}
+.topbar nav{display:flex; gap:.15rem; flex-wrap:wrap; margin-left:auto}
+.topbar nav a{font-size:.82rem; color:var(--muted); text-decoration:none; padding:.35rem .55rem; border-radius:6px; border:1px solid transparent}
+.topbar nav a:hover{color:var(--ink); border-color:var(--line)}
+.themebtn{border:1px solid var(--line); background:var(--panel2); color:var(--ink); border-radius:6px; padding:.35rem .6rem; font-size:.8rem; cursor:pointer}
+
+main{max-width:1180px; margin:0 auto; padding: 1.4rem 1.2rem 5rem}
+
+/* hero */
+.hero{padding:2.6rem 0 1.6rem; border-bottom:1px solid var(--line); margin-bottom:2rem}
+.hero h1{font-size:clamp(1.9rem,4vw,2.6rem); max-width:20ch}
+.hero .sub{color:var(--muted); max-width:64ch; font-size:1.05rem}
+.cta{display:flex; gap:.7rem; margin-top:1.1rem; flex-wrap:wrap}
+.btn{display:inline-block; padding:.6rem 1.1rem; border-radius:8px; text-decoration:none; font-size:.92rem; font-weight:600; border:1px solid var(--line)}
+.btn.accent{background:var(--accent); color:#231400; border-color:var(--accent)}
+.btn.ghost{color:var(--ink)}
+.btn.small{padding:.4rem .8rem; font-size:.82rem; font-weight:500}
+
+/* weekmap */
+.weekmap{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.3rem 1.4rem; margin-bottom:2.4rem}
+.wm-title{font-weight:700; margin:0 0 .2rem}
+.wm-note{color:var(--muted); font-size:.88rem; margin-bottom:1rem}
+.wm-legend{display:flex; flex-wrap:wrap; gap:.9rem; font-size:.76rem; color:var(--muted); margin-bottom:.9rem}
+.wm-legend i{display:inline-block; width:.65rem; height:.65rem; border-radius:2px; margin-right:.3rem; vertical-align:-1px}
+.wm-row{display:flex; align-items:center; gap:1rem; text-decoration:none; color:inherit; padding:.6rem .3rem; border-top:1px solid var(--line)}
+.wm-row:first-of-type{border-top:none}
+.wm-row:hover{background:var(--panel2)}
+.wm-row .nm{flex:0 0 230px; font-size:.85rem; font-weight:600}
+.wm-row .nm small{display:block; font-weight:400; color:var(--muted); font-size:.74rem; margin-top:.15rem}
+.wm-track{flex:1; display:grid; grid-template-columns:repeat(6,1fr); height:14px; border-radius:4px; overflow:hidden; background:var(--panel2)}
+.wm-bar{grid-column: calc(attr(data-from) + 1) / calc(attr(data-to) + 1); border-radius:4px}
+.wm-day1 .wm-bar,.wm-day6 .wm-bar,.wm-day7 .wm-bar{grid-column:1/7; background:linear-gradient(90deg,var(--p-url),var(--p-dns),var(--p-tcp),var(--p-tls),var(--p-srv),var(--p-dl))}
+.wm-day2 .wm-bar{grid-column:2/4; background:linear-gradient(90deg,var(--p-dns),var(--p-tcp))}
+.wm-day3 .wm-bar{grid-column:2/3; background:var(--p-dns)}
+.wm-day4 .wm-bar{grid-column:2/3; background:var(--p-dns)}
+.wm-day5 .wm-bar{grid-column:3/6; background:linear-gradient(90deg,var(--p-tcp),var(--p-tls),var(--p-srv))}
+
+/* day nav pills */
+.daypills{display:flex; gap:.4rem; flex-wrap:wrap; margin-bottom:2.2rem}
+.daypills a{font-size:.8rem; padding:.4rem .8rem; border-radius:999px; border:1px solid var(--line); text-decoration:none; color:var(--muted)}
+.daypills a:hover{color:var(--ink); border-color:var(--accent2)}
+
+/* day sections */
+.day{border-top:3px solid var(--line); padding-top:1.6rem; margin-bottom:3.6rem; scroll-margin-top:80px}
+.day .daytag{display:inline-flex; align-items:center; gap:.5rem; font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:.3rem}
+.day .daytag .time{background:var(--panel2); border:1px solid var(--line); padding:.1rem .5rem; border-radius:999px}
+.day h2{font-size:1.7rem}
+.day > .lede{color:var(--muted); max-width:70ch}
+
+.topic{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.3rem 1.4rem; margin:1.3rem 0}
+.topic h3{font-size:1.18rem; display:flex; align-items:center; gap:.5rem}
+.topic h3 .n{font-family: Georgia, serif; color:var(--accent); font-weight:700}
+.topic .explain{margin-bottom:.9rem}
+.topic .seo{background:var(--panel2); border-left:3px solid var(--accent2); padding:.7rem .9rem; border-radius:0 8px 8px 0; font-size:.92rem; margin:.9rem 0}
+.topic .seo b{color:var(--accent2)}
+.topic .mistakes{font-size:.9rem; color:var(--muted)}
+.topic .mistakes li{margin-bottom:.25rem}
+.sources{display:flex; flex-wrap:wrap; gap:.5rem; margin:.7rem 0}
+.sources a{font-size:.78rem; color:var(--ink); background:var(--panel2); border:1px solid var(--line); padding:.3rem .6rem; border-radius:6px; text-decoration:none}
+.sources a:hover{border-color:var(--accent2)}
+
+/* video card */
+.videos{display:grid; gap:.8rem; margin-top:1rem}
+.vcard{display:flex; gap:.9rem; border:1px dashed var(--line); border-radius:10px; padding:.85rem .9rem; background:var(--panel2)}
+.vcard .play{flex:0 0 auto; width:2.4rem; height:2.4rem; border-radius:50%; background:var(--accent); color:#231400; display:flex; align-items:center; justify-content:center; font-size:1rem}
+.vcard .vbody{flex:1; min-width:0}
+.vcard .vtitle{font-weight:700; font-size:.95rem}
+.vcard .vmeta{display:flex; gap:.4rem; flex-wrap:wrap; margin:.3rem 0}
+.badge{font-size:.68rem; padding:.15rem .5rem; border-radius:999px; border:1px solid var(--line); text-transform:uppercase; letter-spacing:.03em}
+.badge.official{color:var(--off); border-color:var(--off)}
+.badge.established{color:var(--est); border-color:var(--est)}
+.badge.independent{color:var(--ind); border-color:var(--ind)}
+.vcard .watchfor{font-size:.85rem; color:var(--muted); margin-top:.3rem}
+.vcard a.vlink{font-size:.82rem; font-weight:600}
+
+/* check questions */
+details.q{border:1px solid var(--line); border-radius:8px; padding:.6rem .9rem; margin:.5rem 0; background:var(--panel)}
+details.q summary{cursor:pointer; font-weight:600; font-size:.92rem}
+details.q .a{margin-top:.5rem; font-size:.9rem; color:var(--muted); border-top:1px dashed var(--line); padding-top:.5rem}
+
+/* lab */
+.lab{background:linear-gradient(180deg, var(--panel2), var(--panel)); border:1px solid var(--accent2); border-radius:12px; padding:1.3rem 1.4rem; margin-top:1.6rem}
+.lab h3{color:var(--accent2)}
+.lab ol{padding-left:1.2rem}
+.lab li{margin-bottom:.5rem}
+.lab .deliverable{margin-top:.8rem; font-size:.88rem; background:var(--panel2); border-radius:8px; padding:.6rem .8rem}
+
+/* tables */
+table.data{width:100%; border-collapse:collapse; font-size:.88rem; min-width:640px}
+table.data th, table.data td{text-align:left; padding:.55rem .7rem; border-bottom:1px solid var(--line)}
+table.data th{color:var(--muted); font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.03em}
+table.data tr:hover td{background:var(--panel2)}
+
+/* misc */
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:1.6rem}
+@media (max-width:760px){ .grid2{grid-template-columns:1fr} .wm-row .nm{flex-basis:150px} }
+.plain-list{padding-left:1.1rem}
+.plain-list li{margin-bottom:.5rem}
+.notice{background:var(--panel); border:1px solid var(--accent); border-radius:12px; padding:1.2rem 1.4rem; margin:2rem 0}
+.small{font-size:.85rem}
+.muted{color:var(--muted)}
+.cheat{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.4rem}
+.cheat h3{margin-top:1.2rem}
+.cheat h3:first-child{margin-top:0}
+pre.cmd{background:#08111a; color:#b6f2c6; border-radius:8px; padding:.8rem 1rem; overflow-x:auto; font-size:.84rem; border:1px solid var(--line)}
+:root[data-theme="light"] pre.cmd, :root:not([data-theme="dark"]) pre.cmd{background:#101820; color:#a9f0bd}
+footer{border-top:1px solid var(--line); margin-top:3rem; padding-top:1.6rem; color:var(--muted); font-size:.85rem}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="topbar">
+    <div class="brand">URL → Server</div>
+    <button class="themebtn" id="themeToggle" type="button">🌙 Theme</button>
+    <nav>
+      <a href="#overview">Overview</a>
+      <a href="#day-1">D1</a><a href="#day-2">D2</a><a href="#day-3">D3</a><a href="#day-4">D4</a>
+      <a href="#day-5">D5</a><a href="#day-6">D6</a><a href="#day-7">D7</a>
+      <a href="#cheatsheet">Cheat sheet</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero" id="overview">
+  <h1>From URL to Server</h1>
+  <p class="sub">Seven days, about twenty hours. You will follow one request from the keyboard to the server that answers it, learn exactly what happens at every stop, and prove it yourself with Chrome DevTools, <code>nslookup</code> and <code>dig</code> — the version built for an SEO who needs to diagnose crawl, indexing and speed issues, not just pass a networking exam.</p>
+  <div class="cta">
+    <a class="btn accent" href="#day-1">Start Day 1</a>
+    <a class="btn ghost" href="#cheatsheet">Open the cheat sheet</a>
+  </div>
+</section>
+
+<div class="weekmap" id="weekmap">
+  <p class="wm-title">The week as a request waterfall</p>
+  <p class="wm-note">Each column is a phase of one request — the same phases you'll see in the DevTools <b>Timing</b> tab. Each bar shows which phases that day covers.</p>
+  <div class="wm-legend">
+    <span><i style="background:var(--p-url)"></i>URL &amp; caches</span>
+    <span><i style="background:var(--p-dns)"></i>DNS lookup</span>
+    <span><i style="background:var(--p-tcp)"></i>TCP connect</span>
+    <span><i style="background:var(--p-tls)"></i>TLS</span>
+    <span><i style="background:var(--p-srv)"></i>Server (TTFB)</span>
+    <span><i style="background:var(--p-dl)"></i>Download</span>
+  </div>
+  <a class="wm-row wm-day1" href="#day-1"><span class="nm">Day 1 — Big picture &amp; URLs<small>The whole journey at a glance</small></span><span class="wm-track"><i class="wm-bar"></i></span></a>
+  <a class="wm-row wm-day2" href="#day-2"><span class="nm">Day 2 — IPs &amp; domain names<small>What DNS is asked, what the connection needs</small></span><span class="wm-track"><i class="wm-bar"></i></span></a>
+  <a class="wm-row wm-day3" href="#day-3"><span class="nm">Day 3 — How DNS resolves a name<small>Resolvers, root, TLD, authoritative, caching</small></span><span class="wm-track"><i class="wm-bar"></i></span></a>
+  <a class="wm-row wm-day4" href="#day-4"><span class="nm">Day 4 — DNS records &amp; SEO setup<small>Record types, www vs. apex, migrations</small></span><span class="wm-track"><i class="wm-bar"></i></span></a>
+  <a class="wm-row wm-day5" href="#day-5"><span class="nm">Day 5 — TCP, TLS, servers &amp; CDNs<small>Connection, encryption, who answers</small></span><span class="wm-track"><i class="wm-bar"></i></span></a>
+  <a class="wm-row wm-day6" href="#day-6"><span class="nm">Day 6 — DevTools, nslookup &amp; dig<small>Measure every phase yourself</small></span><span class="wm-track"><i class="wm-bar"></i></span></a>
+  <a class="wm-row wm-day7" href="#day-7"><span class="nm">Day 7 — SEO impact &amp; your report<small>Googlebot's view, TTFB, the write-up</small></span><span class="wm-track"><i class="wm-bar"></i></span></a>
+</div>
+
+<div class="grid2" style="margin-bottom:2.4rem">
+  <div>
+    <h3>What you'll be able to do by Day 7</h3>
+    <ul class="plain-list">
+      <li>Explain, from memory and in order, how a URL becomes the first byte of a response: URL parsing → cache checks → DNS → TCP → TLS → request → server/CDN → response.</li>
+      <li>Tell apart a domain, a DNS record, an IP address, a server, a host, a CDN and a registrar — and know which one to check when something breaks.</li>
+      <li>Read a <code>dig</code> answer and a DevTools <b>Timing</b> tab and say exactly where the time went.</li>
+      <li>Explain how DNS and server problems look to Googlebot, in Search Console and in TTFB.</li>
+      <li>Deliver a written URL-journey report for one of your own articles.</li>
+    </ul>
+  </div>
+  <div>
+    <h3>How each topic works</h3>
+    <ol class="plain-list">
+      <li>Read the explanation (10–20 min). Every topic ends with the SEO angle and the mistakes people make.</li>
+      <li>Watch the video, keeping the "while watching, note" prompt in mind.</li>
+      <li>Answer the check questions without scrolling up.</li>
+      <li>Do the lab. It's what makes it stick, and its outputs feed your Day 7 report — keep everything you capture.</li>
+    </ol>
+    <p class="small muted">Short on time? Read every explanation, watch one video per topic, and do Labs 3, 6 and 7.</p>
+  </div>
+</div>
+
+<div class="wrap-x">
+<table class="data">
+<thead><tr><th>Day</th><th>Focus</th><th>Main lab</th><th>Time</th></tr></thead>
+<tbody>
+<tr><td><a href="#day-1">Day 1</a></td><td>Internet, web, client–server model, URL anatomy, the journey at a glance</td><td>Draft the journey from memory, first look at DevTools, count redirects</td><td>2.5 h</td></tr>
+<tr><td><a href="#day-2">Day 2</a></td><td>IP addresses (IPv4, IPv6, NAT, ports), domain names, registry/registrar/DNS host</td><td>Find your site's IPs, network owner and registration data</td><td>2.5 h</td></tr>
+<tr><td><a href="#day-3">Day 3</a></td><td>Stub &amp; recursive resolvers, root/TLD/authoritative servers, caching, TTL, failures</td><td>Trace a lookup with <code>nslookup</code> and <code>dig +trace</code></td><td>3 h</td></tr>
+<tr><td><a href="#day-4">Day 4</a></td><td>Record types (A, AAAA, CNAME, NS, MX, TXT, CAA…), www vs. apex, subdomains, migrations</td><td>Audit every DNS record on your domain, test host redirects</td><td>3 h</td></tr>
+<tr><td><a href="#day-5">Day 5</a></td><td>TCP handshake, TLS &amp; certificates, web servers &amp; hosting, reverse proxies, CDNs</td><td>Time each phase with <code>curl</code>, inspect the certificate, ID the CDN</td><td>3 h</td></tr>
+<tr><td><a href="#day-6">Day 6</a></td><td>Chrome DevTools Network panel, <code>nslookup</code>, <code>dig</code></td><td>Measure 3 URLs with all three tools, reconcile results</td><td>3 h</td></tr>
+<tr><td><a href="#day-7">Day 7</a></td><td>How Googlebot experiences the journey, TTFB, the URL journey report</td><td>Write and present the report</td><td>3.5 h</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="notice" id="video-note">
+  <h3>How to use the videos in this plan</h3>
+  <p>I checked what's real and current as of <b>20 September 2026</b> and could not safely hand you fixed video links: YouTube's index for "2026" content is noisy right now, full of re-uploaded and mistitled clips, and a link that looks right today can be deleted, geo-blocked or replaced tomorrow. Instead, every topic below links straight to a <b>search inside one specific, trusted channel</b> — official standards bodies (Google Search Central, Chrome for Developers, ICANN, Cloudflare) or long-running, well-reviewed educators (freeCodeCamp, IBM Technology, NetworkChuck, PowerCert Animated Videos, Fireship). Click the link, and pick the newest video that matches the subtopic.</p>
+  <h4>Vetting checklist — apply this to whichever video you pick</h4>
+  <ol class="plain-list">
+    <li>Is the upload recent (ideally 2025–2026) and does the channel have a real track record in networking, web performance or SEO?</li>
+    <li>Does it show commands and outputs you can reproduce yourself, not just slides?</li>
+    <li>Does it agree with the primary sources listed under the topic? If not, trust the primary source.</li>
+    <li>Are the tool screenshots current? DevTools and Search Console redesign often.</li>
+  </ol>
+  <p class="small muted">Badges: <span class="badge official">Official</span> a standards body or the tool vendor itself. <span class="badge established">Established</span> a long-running educational channel with a track record. <span class="badge independent">Independent</span> good for orientation, but check claims against the primary sources.</p>
+</div>
+
+<div class="grid2" style="margin-bottom:1rem">
+  <div>
+    <h3>What you need</h3>
+    <ul class="plain-list">
+      <li>Chrome or another Chromium browser, for DevTools.</li>
+      <li>A terminal. Windows Command Prompt/PowerShell include <code>nslookup</code> and <code>curl.exe</code>; <code>dig</code> needs WSL. macOS and Linux include <code>dig</code> (Debian/Ubuntu: install <code>dnsutils</code>; RHEL/Fedora: <code>bind-utils</code>).</li>
+      <li>Three URLs to study: one of your own articles, your homepage, and one competitor article.</li>
+      <li>If you can get it: DNS provider dashboard, hosting panel, server access logs, Google Search Console.</li>
+    </ul>
+  </div>
+  <div>
+    <h3>What this plan does not cover</h3>
+    <p>The plan stops the moment the server starts to answer. HTTP itself (status codes, headers, caching, compression, redirects, robots directives) is the next stage — Day 7 shows exactly where it begins. Rendering and JavaScript SEO come after that.</p>
+    <p class="small muted">All lookups in the labs are ordinary, harmless queries. Run them against your own sites and public sites; never use scanning tools against systems you don't own.</p>
+  </div>
+</div>
+
+<div class="daypills">
+  <a href="#day-1">Day 1</a><a href="#day-2">Day 2</a><a href="#day-3">Day 3</a><a href="#day-4">Day 4</a>
+  <a href="#day-5">Day 5</a><a href="#day-6">Day 6</a><a href="#day-7">Day 7</a>
+</div>
+
+<!-- ============ DAY 1 ============ -->
+<section class="day" id="day-1">
+  <span class="daytag">Day 1 <span class="time">2.5 h</span></span>
+  <h2>Big picture and URLs</h2>
+  <p class="lede">Before you zoom into any single stop, see the whole trip. Today you build the mental map that every later day fills in.</p>
+
+  <div class="topic">
+    <h3><span class="n">1.1</span> The internet vs. the web, and the client–server model</h3>
+    <div class="explain">
+      <p>The <b>internet</b> is the physical and logical network of cables, routers and protocols that moves data between machines. The <b>web</b> is one application that runs on top of it — pages linked by URLs, delivered over HTTP. Email, DNS and video calls are other applications on the same internet.</p>
+      <p>Almost every web interaction is <b>client–server</b>: your browser (the client) asks a question, a server answers it. The server is just a computer that stays on, listens on a port, and runs software built to answer that kind of question. A CDN edge node, a load balancer and an origin server are all "servers" playing different roles in the same conversation — you'll meet each on Day 5.</p>
+    </div>
+    <div class="seo"><b>SEO angle:</b> Googlebot is a client too. Everything that makes a page slow or unreachable for a human browser — DNS failures, connection timeouts, a server that's down — makes it slow or unreachable for Googlebot, and that shows up as crawl errors and crawl budget waste in Search Console.</div>
+    <ul class="mistakes small">
+      <li>Common mix-up: "the internet is down" when actually one website's server is down. The network layer and the one application are not the same thing.</li>
+    </ul>
+    <div class="sources">
+      <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works" target="_blank" rel="noopener">MDN — How the web works</a>
+      <a href="https://web.dev/articles/howbrowserswork" target="_blank" rel="noopener">web.dev — How browsers work</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "how the internet works" / "client server model"</div>
+          <div class="vmeta"><span class="badge established">Established educator</span></div>
+          <div class="watchfor">While watching, note: which steps happen before any HTTP request is even sent?</div>
+          <a class="vlink" href="https://www.youtube.com/@freecodecamp/search?query=how%20the%20internet%20works" target="_blank" rel="noopener">Search on freeCodeCamp.org →</a>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "how browsers work" / "what happens when you type a URL"</div>
+          <div class="vmeta"><span class="badge official">Official</span></div>
+          <div class="watchfor">While watching, note: how many distinct systems (not steps — systems) are involved before pixels appear?</div>
+          <a class="vlink" href="https://www.youtube.com/@ChromeDevs/search?query=what%20happens%20when%20you%20type%20a%20url" target="_blank" rel="noopener">Search on Chrome for Developers →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic">
+    <h3><span class="n">1.2</span> Anatomy of a URL</h3>
+    <div class="explain">
+      <p>Take <code>https://www.example.com:443/blog/seo-guide?utm_source=news&amp;page=2#intro</code> apart:</p>
+      <ul class="plain-list">
+        <li><b>Scheme</b> — <code>https</code>. Tells the browser which protocol to speak, and implies the default port.</li>
+        <li><b>Host</b> — <code>www.example.com</code>. The domain name the browser must resolve to an IP address.</li>
+        <li><b>Port</b> — <code>443</code>. Almost always implicit (80 for HTTP, 443 for HTTPS); rarely written out.</li>
+        <li><b>Path</b> — <code>/blog/seo-guide</code>. Which resource on that server.</li>
+        <li><b>Query string</b> — <code>?utm_source=news&amp;page=2</code>. Extra parameters; the server decides whether they change the response.</li>
+        <li><b>Fragment</b> — <code>#intro</code>. Never sent to the server at all — resolved entirely inside the browser.</li>
+      </ul>
+    </div>
+    <div class="seo"><b>SEO angle:</b> the fragment never reaching the server is exactly why URLs that differ only after <code>#</code> are the same URL to a crawler. Query strings, by contrast, can create infinite crawlable duplicates (faceted navigation, tracking parameters) — this is where canonical tags and parameter handling start.</div>
+    <ul class="mistakes small">
+      <li>Assuming a trailing slash, a fragment, or parameter order never matters for indexing — they can, depending on server and canonicalization setup.</li>
+    </ul>
+    <div class="sources">
+      <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/URL" target="_blank" rel="noopener">MDN — What is a URL?</a>
+      <a href="https://www.rfc-editor.org/rfc/rfc3986" target="_blank" rel="noopener">RFC 3986 — URI Generic Syntax</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "anatomy of a URL" / "URL structure explained"</div>
+          <div class="vmeta"><span class="badge established">Established educator</span></div>
+          <div class="watchfor">While watching, note: does the video explicitly confirm the fragment is never sent to the server?</div>
+          <a class="vlink" href="https://www.youtube.com/@Fireship/search?query=url%20structure" target="_blank" rel="noopener">Search on Fireship →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic">
+    <h3><span class="n">1.3</span> The journey at a glance</h3>
+    <div class="explain">
+      <p>Memorize this order — every later day expands one link in this chain:</p>
+      <ol class="plain-list">
+        <li>Browser parses the URL and checks its own caches (HSTS list, DNS cache, HTTP cache) for shortcuts.</li>
+        <li>If needed, DNS resolves the host to an IP address.</li>
+        <li>Browser opens a TCP connection to that IP on the right port.</li>
+        <li>For HTTPS, browser and server perform a TLS handshake to encrypt the channel.</li>
+        <li>Browser sends the HTTP request; the server (often via a CDN or reverse proxy) processes it.</li>
+        <li>Server sends back headers, then the response body starts arriving — the byte stream downloads.</li>
+      </ol>
+    </div>
+    <div class="seo"><b>SEO angle:</b> this exact order is what Chrome's <b>Network → Timing</b> tab shows for every request, and it's the order Google's own crawl-efficiency guidance follows. When someone says "TTFB is slow," they mean step 6 started late — but the cause can be anywhere in steps 1–5.</div>
+    <div class="sources">
+      <a href="https://developer.chrome.com/docs/devtools/network/reference#timing" target="_blank" rel="noopener">Chrome DevTools — Network Timing reference</a>
+    </div>
+  </div>
+
+  <div class="lab">
+    <h3>Lab 1 — Draft the journey, then look under the hood</h3>
+    <ol>
+      <li>From memory, sketch the six-step journey above for a URL of your choice, in your own words, no notes.</li>
+      <li>Open Chrome DevTools (<code>F12</code>) → <b>Network</b> tab, reload your homepage, click the first document request, and open <b>Timing</b>. Screenshot it.</li>
+      <li>Pick apart the URL of one of your articles into scheme / host / port / path / query / fragment using a plain-text note.</li>
+      <li>Load the same article and count redirects in the Network panel (status 301/302 rows before the final 200).</li>
+    </ol>
+    <div class="deliverable"><b>Keep for Day 7:</b> your six-step sketch, the Timing screenshot, the URL breakdown, and the redirect count.</div>
+  </div>
+
+  <details class="q"><summary>Check question 1 — Are the internet and the web the same thing?</summary><div class="a">No. The internet is the network; the web is one application (HTTP + URLs + HTML) that runs on it, alongside email, DNS and others.</div></details>
+  <details class="q"><summary>Check question 2 — Which part of a URL is never sent to the server?</summary><div class="a">The fragment (everything after <code>#</code>). It's resolved entirely in the browser.</div></details>
+  <details class="q"><summary>Check question 3 — Put these in order: TLS handshake, DNS resolution, TCP connect, response download.</summary><div class="a">DNS resolution → TCP connect → TLS handshake → response download.</div></details>
+</section>
+
+<!-- ============ DAY 2 ============ -->
+<section class="day" id="day-2">
+  <span class="daytag">Day 2 <span class="time">2.5 h</span></span>
+  <h2>IP addresses and domain names</h2>
+  <p class="lede">Domains are the label; IP addresses are the destination. Today you learn what a name actually resolves to, and who's responsible for the name itself.</p>
+
+  <div class="topic">
+    <h3><span class="n">2.1</span> IPv4, IPv6, NAT and ports</h3>
+    <div class="explain">
+      <p>An <b>IPv4</b> address like <code>93.184.216.34</code> is four 8-bit numbers — about 4.3 billion possible addresses, long since exhausted for public use. <b>IPv6</b> addresses like <code>2606:2800:220:1:248:1893:25c8:1946</code> use 128 bits, enough addresses that exhaustion isn't a practical concern. Most sites today answer on both; DevTools and <code>dig</code> will show you which.</p>
+      <p><b>NAT</b> (Network Address Translation) is why your home network's many devices share one public IPv4 address — your router rewrites the packets. A <b>port</b> is a number (0–65535) that identifies which service on a given IP to talk to: 80 for HTTP, 443 for HTTPS, 22 for SSH. An IP without a port is like a building without an apartment number.</p>
+    </div>
+    <div class="seo"><b>SEO angle:</b> if your site resolves to different IPs for IPv4 vs IPv6 and only one is configured correctly (firewall, certificate, load balancer), some crawlers or users on that stack will fail silently while others succeed — a classic "works on my machine" crawl issue.</div>
+    <div class="sources">
+      <a href="https://www.cloudflare.com/learning/dns/glossary/what-is-my-ip-address/" target="_blank" rel="noopener">Cloudflare Learning — IP addresses</a>
+      <a href="https://www.rfc-editor.org/rfc/rfc791" target="_blank" rel="noopener">RFC 791 — Internet Protocol (IPv4)</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "IPv4 vs IPv6 explained" / "what is NAT"</div>
+          <div class="vmeta"><span class="badge established">Established educator</span></div>
+          <div class="watchfor">While watching, note: one concrete reason IPv6 adoption is slower than the exhaustion of IPv4 alone would predict.</div>
+          <a class="vlink" href="https://www.youtube.com/@IBMTechnology/search?query=ipv4%20vs%20ipv6" target="_blank" rel="noopener">Search on IBM Technology →</a>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "ports explained" / "NAT explained"</div>
+          <div class="vmeta"><span class="badge established">Established educator</span></div>
+          <div class="watchfor">While watching, note: the difference between a private and a public IP address, with an example from your own router.</div>
+          <a class="vlink" href="https://www.youtube.com/@NetworkChuck/search?query=nat%20explained" target="_blank" rel="noopener">Search on NetworkChuck →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic">
+    <h3><span class="n">2.2</span> Domain names: registry, registrar, and DNS host</h3>
+    <div class="explain">
+      <p>Three different roles, often confused:</p>
+      <ul class="plain-list">
+        <li><b>Registry</b> — the organization that runs a whole top-level domain (e.g. Verisign runs <code>.com</code>; a country's registry runs its ccTLD). They keep the master list of who owns what.</li>
+        <li><b>Registrar</b> — the company you actually buy the domain from (Namecheap, GoDaddy, Cloudflare Registrar…), accredited by ICANN to sell registry names.</li>
+        <li><b>DNS host / nameserver provider</b> — whoever actually answers DNS queries for your domain's records. Often the registrar by default, but frequently moved to a dedicated provider (Cloudflare, Route 53, your CDN) for speed and features.</li>
+      </ul>
+      <p>These three can be three different companies at once, and that's normal — and exactly why "my DNS won't update" support tickets get confusing.</p>
+    </div>
+    <div class="seo"><b>SEO angle:</b> during a site migration, "update the DNS" can mean changing nameservers at the registrar (pointing to a new DNS host entirely) or just editing records at your existing DNS host — very different actions with very different propagation behavior. Knowing which layer you're changing prevents downtime.</div>
+    <ul class="mistakes small">
+      <li>Contacting the registrar to fix a DNS record that's actually managed elsewhere (or vice versa).</li>
+    </ul>
+    <div class="sources">
+      <a href="https://www.icann.org/resources/pages/registries-registrars-2012-02-25-en" target="_blank" rel="noopener">ICANN — Registries and registrars</a>
+      <a href="https://www.cloudflare.com/learning/dns/glossary/what-is-a-domain-name/" target="_blank" rel="noopener">Cloudflare Learning — Domain names</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "registry vs registrar" / "how domain names work"</div>
+          <div class="vmeta"><span class="badge official">Official</span></div>
+          <div class="watchfor">While watching, note: what ICANN's role is, versus the registry's, versus the registrar's.</div>
+          <a class="vlink" href="https://www.youtube.com/@icannorg/search?query=how%20domain%20names%20work" target="_blank" rel="noopener">Search on ICANN →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab">
+    <h3>Lab 2 — Find your site's IPs and its registration data</h3>
+    <ol>
+      <li>In a terminal: <code>nslookup example.com</code> (use your own domain) — record every IPv4 address returned.</li>
+      <li>Run <code>nslookup -type=AAAA example.com</code> — does it have IPv6 addresses too?</li>
+      <li>Look up your domain's WHOIS/RDAP record (your registrar's site or a public RDAP lookup tool) — note the registrar and the nameservers listed.</li>
+      <li>Compare the nameservers in WHOIS to what actually answers your DNS queries (you'll fully unpack this on Day 3) — are they the same company as your registrar, or different?</li>
+    </ol>
+    <div class="deliverable"><b>Keep for Day 7:</b> your IPv4/IPv6 list, registrar name, and nameserver list.</div>
+  </div>
+
+  <details class="q"><summary>Check question 1 — What's the difference between a registry and a registrar?</summary><div class="a">The registry runs the whole TLD (e.g. .com) and keeps the master database; the registrar is the accredited company you buy a domain from.</div></details>
+  <details class="q"><summary>Check question 2 — Can your DNS host be a different company from your registrar?</summary><div class="a">Yes, and it's common — e.g. a domain bought at one registrar can have its DNS managed entirely by Cloudflare.</div></details>
+  <details class="q"><summary>Check question 3 — What does a port number identify that an IP address alone doesn't?</summary><div class="a">Which specific service on that machine should handle the connection (e.g. 443 for HTTPS vs. 22 for SSH).</div></details>
+</section>
+
+<!-- ============ DAY 3 ============ -->
+<section class="day" id="day-3">
+  <span class="daytag">Day 3 <span class="time">3 h</span></span>
+  <h2>How DNS resolves a name</h2>
+  <p class="lede">The single most misunderstood step in the whole journey. Today you trace exactly who is asked what, in what order, and why caching makes DNS both fast and occasionally very confusing.</p>
+
+  <div class="topic">
+    <h3><span class="n">3.1</span> Stub resolver, recursive resolver, and the four-step lookup</h3>
+    <div class="explain">
+      <p>Your OS has a tiny <b>stub resolver</b> that doesn't know how to find anything itself — it just forwards the question to a <b>recursive resolver</b> (your ISP's, or a public one like 1.1.1.1 or 8.8.8.8). The recursive resolver does the real work, walking down the DNS hierarchy:</p>
+      <ol class="plain-list">
+        <li>Ask a <b>root server</b>: "who handles <code>.com</code>?" → gets pointed to the <code>.com</code> TLD servers.</li>
+        <li>Ask a <b>TLD server</b>: "who handles <code>example.com</code>?" → gets pointed to example.com's <b>authoritative nameservers</b>.</li>
+        <li>Ask the <b>authoritative nameserver</b>: "what's the A record for example.com?" → gets the actual IP address.</li>
+        <li>Return that answer to your device, and cache it for next time.</li>
+      </ol>
+    </div>
+    <div class="seo"><b>SEO angle:</b> Googlebot uses Google's own recursive resolvers, which have their own cache. A DNS change you just made might already be live for you (fresh local cache) while Googlebot is still serving a cached, stale answer from before — this is the single most common cause of "I fixed it, why does Search Console still show the old error?"</div>
+    <ul class="mistakes small">
+      <li>Believing "DNS propagation" is one global event; it's actually thousands of independent caches expiring on their own schedule.</li>
+    </ul>
+    <div class="sources">
+      <a href="https://www.cloudflare.com/learning/dns/what-is-dns/" target="_blank" rel="noopener">Cloudflare Learning — What is DNS?</a>
+      <a href="https://developers.google.com/search/docs/crawling-indexing/googlebot" target="_blank" rel="noopener">Google — Googlebot overview</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "how DNS works" / "DNS resolution explained step by step"</div>
+          <div class="vmeta"><span class="badge established">Established educator</span></div>
+          <div class="watchfor">While watching, note: which server in the chain actually stores your site's IP address — root, TLD, or authoritative?</div>
+          <a class="vlink" href="https://www.youtube.com/@PowerCertAnimatedVideos/search?query=how%20dns%20works" target="_blank" rel="noopener">Search on PowerCert Animated Videos →</a>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "how DNS works" (deep dive, engineering explainer)</div>
+          <div class="vmeta"><span class="badge official">Official</span></div>
+          <div class="watchfor">While watching, note: how Cloudflare describes the role of a resolver's own cache in speeding up repeat lookups.</div>
+          <a class="vlink" href="https://www.youtube.com/@Cloudflare/search?query=how%20dns%20works" target="_blank" rel="noopener">Search on Cloudflare →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic">
+    <h3><span class="n">3.2</span> Caching, TTL, and what happens when DNS fails</h3>
+    <div class="explain">
+      <p>Every DNS record has a <b>TTL</b> (time-to-live) in seconds — how long a resolver is allowed to cache the answer before asking again. A low TTL (e.g. 300s) means changes spread faster but you generate more lookup traffic; a high TTL (e.g. 86400s) means faster repeat lookups but slower rollout of changes.</p>
+      <p>If DNS fails — a nameserver is unreachable, a record was deleted, TTL expired mid-migration — the browser (or crawler) simply cannot find an IP address to connect to, and the request never even reaches step 3 of the journey. This is the earliest possible point of total failure, and it produces a <code>DNS_PROBE_FINISHED_NXDOMAIN</code>-style error, not an HTTP error, because no HTTP request was ever sent.</p>
+    </div>
+    <div class="seo"><b>SEO angle:</b> before any planned DNS change (migration, provider switch), lower the TTL of the records you're about to touch a day or two in advance. That shrinks the stale-cache window for every resolver, Googlebot's included.</div>
+    <div class="sources">
+      <a href="https://www.rfc-editor.org/rfc/rfc1035" target="_blank" rel="noopener">RFC 1035 — Domain Names, Implementation and Specification</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "DNS TTL explained" / "DNS caching explained"</div>
+          <div class="vmeta"><span class="badge independent">Independent</span></div>
+          <div class="watchfor">While watching, note: one real scenario where lowering TTL in advance of a migration would have prevented an outage.</div>
+          <a class="vlink" href="https://www.youtube.com/@NetworkChuck/search?query=dns%20ttl%20explained" target="_blank" rel="noopener">Search on NetworkChuck →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab">
+    <h3>Lab 3 — Trace a real lookup</h3>
+    <ol>
+      <li>Run <code>nslookup example.com</code> on your own domain; note which resolver answered (it's shown at the top of the output).</li>
+      <li>Run <code>dig example.com +trace</code> (macOS/Linux/WSL) and read the output top to bottom — you'll literally see root → TLD → authoritative being queried in order.</li>
+      <li>Run <code>dig example.com</code> (without <code>+trace</code>) and find the <code>TTL</code> column — write down the number in seconds and convert it to hours.</li>
+      <li>Run the same <code>dig +trace</code> against a well-known site (e.g. a major news outlet) and compare how many hops it took versus your own domain.</li>
+    </ol>
+    <div class="deliverable"><b>Keep for Day 7:</b> the full <code>dig +trace</code> output and the TTL value for your domain's main record.</div>
+  </div>
+
+  <details class="q"><summary>Check question 1 — What's the difference between a stub resolver and a recursive resolver?</summary><div class="a">The stub resolver (on your device) can't resolve anything itself — it forwards the question to a recursive resolver, which does the actual walk through root → TLD → authoritative servers.</div></details>
+  <details class="q"><summary>Check question 2 — Why can two people see different results right after a DNS change?</summary><div class="a">Different resolvers cache the old answer for different amounts of time based on the record's TTL, so caches expire at different moments.</div></details>
+  <details class="q"><summary>Check question 3 — What kind of error do you get if DNS fails, and why isn't it an HTTP status code?</summary><div class="a">A DNS-resolution-level error (e.g. NXDOMAIN) — no HTTP request was ever sent because the browser never got an IP address to connect to.</div></details>
+</section>
+
+<!-- ============ DAY 4 ============ -->
+<section class="day" id="day-4">
+  <span class="daytag">Day 4 <span class="time">3 h</span></span>
+  <h2>DNS records and SEO setup</h2>
+  <p class="lede">DNS isn't just "the A record." Today you learn every record type you'll actually meet as an SEO, and the www-vs-apex decision that trips up nearly every migration.</p>
+
+  <div class="topic">
+    <h3><span class="n">4.1</span> Record types you'll actually use</h3>
+    <div class="explain">
+      <ul class="plain-list">
+        <li><b>A</b> — maps a name to an IPv4 address.</li>
+        <li><b>AAAA</b> — maps a name to an IPv6 address.</li>
+        <li><b>CNAME</b> — points one name to another name (not directly to an IP). Can't coexist with other records on the same name — a common source of conflicts at the root/apex.</li>
+        <li><b>NS</b> — declares which nameservers are authoritative for the domain (or a subdomain).</li>
+        <li><b>MX</b> — where email for the domain should be delivered. Unrelated to the website, but frequently broken by accident during "web" migrations.</li>
+        <li><b>TXT</b> — free-text data used for verification (Google Search Console site ownership, SPF/DKIM for email authentication) and other machine-readable metadata.</li>
+        <li><b>CAA</b> — restricts which certificate authorities are allowed to issue TLS certificates for the domain, a security control you'll meet again on Day 5.</li>
+      </ul>
+    </div>
+    <div class="seo"><b>SEO angle:</b> a TXT record is very likely how you verified your domain in Search Console. If a domain migration wipes and replaces all DNS records without preserving that TXT record (and any others like SPF/DKIM), you silently lose Search Console verification and break company email deliverability in the same move.</div>
+    <ul class="mistakes small">
+      <li>Deleting "unused-looking" TXT or MX records during a DNS cleanup without checking what depends on them first.</li>
+    </ul>
+    <div class="sources">
+      <a href="https://developers.google.com/search/docs/crawling-indexing/verification/verify-site-ownership" target="_blank" rel="noopener">Google — Verify site ownership</a>
+      <a href="https://www.cloudflare.com/learning/dns/dns-records/" target="_blank" rel="noopener">Cloudflare Learning — DNS record types</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "DNS record types explained" (A, CNAME, MX, TXT)</div>
+          <div class="vmeta"><span class="badge established">Established educator</span></div>
+          <div class="watchfor">While watching, note: exactly why a CNAME can't share a name with another record type.</div>
+          <a class="vlink" href="https://www.youtube.com/@IBMTechnology/search?query=dns%20record%20types" target="_blank" rel="noopener">Search on IBM Technology →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic">
+    <h3><span class="n">4.2</span> www vs. apex, subdomains, and migrations</h3>
+    <div class="explain">
+      <p>The <b>apex</b> (or "root," or "naked") domain is <code>example.com</code> with nothing in front. <code>www.example.com</code> is technically a subdomain, historically used to separate "the website" from other services on the bare domain (mail, ftp). Modern practice is to pick one as canonical and 301-redirect the other permanently — Google treats <code>www</code> and non-<code>www</code> as different URLs unless you tell it otherwise.</p>
+      <p>Technically, the apex has historically been unable to use a CNAME (it must use A/AAAA records, since the apex also needs to hold NS and other records) — many providers now offer "CNAME flattening" or "ALIAS" records to work around this at the DNS layer.</p>
+    </div>
+    <div class="seo"><b>SEO angle:</b> pick www or non-www once, redirect consistently everywhere (DNS, server config, canonical tags, internal links, sitemap), and never let both versions serve 200 OK with real content — that's duplicate content Google has to reconcile, and signals get split between the two.</div>
+    <div class="sources">
+      <a href="https://developers.google.com/search/docs/crawling-indexing/canonicalization" target="_blank" rel="noopener">Google — Consolidate duplicate URLs (canonicalization)</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "www vs non-www SEO" / "apex domain CNAME"</div>
+          <div class="vmeta"><span class="badge independent">Independent</span></div>
+          <div class="watchfor">While watching, note: does the creator recommend redirecting at the DNS level, the server level, or both?</div>
+          <a class="vlink" href="https://www.youtube.com/@Cloudflare/search?query=www%20vs%20apex%20domain" target="_blank" rel="noopener">Search on Cloudflare →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab">
+    <h3>Lab 4 — Audit your domain's DNS</h3>
+    <ol>
+      <li>Run <code>dig example.com ANY</code> or, if that's restricted by your resolver, run separate queries: <code>dig example.com A</code>, <code>dig example.com AAAA</code>, <code>dig example.com MX</code>, <code>dig example.com TXT</code>, <code>dig example.com NS</code>.</li>
+      <li>List every record you find and, for each, write one sentence on what it's for.</li>
+      <li>Check whether <code>www.example.com</code> and <code>example.com</code> both resolve, and test in a browser whether one 301-redirects to the other (check the status code in DevTools Network).</li>
+      <li>Find the TXT record used for Search Console (or another) verification and confirm it's still present.</li>
+    </ol>
+    <div class="deliverable"><b>Keep for Day 7:</b> your full record inventory and the www/apex redirect status code.</div>
+  </div>
+
+  <details class="q"><summary>Check question 1 — What's the difference between an A and a CNAME record?</summary><div class="a">An A record points a name directly to an IPv4 address; a CNAME points a name to another name, which then gets resolved further.</div></details>
+  <details class="q"><summary>Check question 2 — Why can deleting an "unused" TXT record be risky?</summary><div class="a">TXT records are often used for domain verification (e.g. Search Console) and email authentication (SPF/DKIM) — deleting one can silently break verification or email deliverability.</div></details>
+  <details class="q"><summary>Check question 3 — Why does Google treat www.example.com and example.com as different URLs by default?</summary><div class="a">They are technically different hostnames; without a consistent redirect and canonical signal, Google has no way to know they should be treated as one.</div></details>
+</section>
+
+<!-- ============ DAY 5 ============ -->
+<section class="day" id="day-5">
+  <span class="daytag">Day 5 <span class="time">3 h</span></span>
+  <h2>TCP, TLS, servers and CDNs</h2>
+  <p class="lede">DNS gave you an IP address. Today you learn what happens once the browser actually connects to it — and who, in practice, is on the other end.</p>
+
+  <div class="topic">
+    <h3><span class="n">5.1</span> The TCP handshake</h3>
+    <div class="explain">
+      <p>Before any data flows, client and server perform a <b>three-way handshake</b>: SYN (client: "can we talk?") → SYN-ACK (server: "yes, go ahead") → ACK (client: "confirmed"). This establishes a reliable, ordered connection — the foundation HTTP is built on. Each leg of that handshake costs at least one network round trip, and on a slow or distant connection this adds real, measurable latency before a single byte of your page has been requested.</p>
+    </div>
+    <div class="seo"><b>SEO angle:</b> this is why being physically closer to your users (or using a CDN with edge nodes near them) cuts load time even before your server does any work — you're cutting round-trip time on the handshake itself, not just download speed.</div>
+    <div class="sources">
+      <a href="https://www.rfc-editor.org/rfc/rfc9293" target="_blank" rel="noopener">RFC 9293 — Transmission Control Protocol (TCP)</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "TCP three-way handshake explained"</div>
+          <div class="vmeta"><span class="badge established">Established educator</span></div>
+          <div class="watchfor">While watching, note: how many round trips the handshake alone costs before any application data is sent.</div>
+          <a class="vlink" href="https://www.youtube.com/@PowerCertAnimatedVideos/search?query=tcp%20three%20way%20handshake" target="_blank" rel="noopener">Search on PowerCert Animated Videos →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic">
+    <h3><span class="n">5.2</span> TLS and certificates</h3>
+    <div class="explain">
+      <p>For HTTPS, right after (or, with TLS 1.3, nearly overlapping) the TCP handshake, client and server negotiate encryption: agree on a cipher, the server presents its <b>certificate</b> (proving it really is example.com, signed by a trusted <b>certificate authority</b>), and both sides derive session keys. Only after this is the actual HTTP request sent, encrypted.</p>
+      <p>A <b>CAA</b> DNS record (Day 4) restricts which certificate authorities are even allowed to issue a cert for your domain — a defense against a misissued certificate from an unrelated CA.</p>
+    </div>
+    <div class="seo"><b>SEO angle:</b> HTTPS has been a confirmed, if lightweight, Google ranking signal for years, and browsers actively warn users off HTTP pages — so a broken, expired or misconfigured certificate doesn't just fail silently, it actively scares visitors away and can affect how Google treats the page.</div>
+    <ul class="mistakes small">
+      <li>Letting a certificate expire unnoticed because renewal isn't automated or monitored.</li>
+    </ul>
+    <div class="sources">
+      <a href="https://developer.chrome.com/docs/devtools/security" target="_blank" rel="noopener">Chrome DevTools — Security panel</a>
+      <a href="https://developers.google.com/search/blog/2014/08/https-as-ranking-signal" target="_blank" rel="noopener">Google — HTTPS as a ranking signal</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "TLS handshake explained" / "how HTTPS works"</div>
+          <div class="vmeta"><span class="badge established">Established educator</span></div>
+          <div class="watchfor">While watching, note: what a certificate actually proves, versus what it does not prove (e.g. content quality or safety).</div>
+          <a class="vlink" href="https://www.youtube.com/@IBMTechnology/search?query=tls%20handshake%20explained" target="_blank" rel="noopener">Search on IBM Technology →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic">
+    <h3><span class="n">5.3</span> Web servers, hosting, reverse proxies and CDNs</h3>
+    <div class="explain">
+      <p>The <b>origin server</b> runs the actual application (WordPress, a static site, a custom app) behind web server software like Nginx or Apache. Between the internet and the origin, a <b>reverse proxy</b> (often the same Nginx, or a dedicated tool) can handle TLS termination, caching, load balancing across multiple origin servers, or routing.</p>
+      <p>A <b>CDN</b> (content delivery network) is a network of servers ("edge nodes") in many locations that cache and serve your content close to each visitor, so most requests never even reach your origin server. This is why the "IP address" you look up for a big site is often a CDN edge IP, not the origin's real IP.</p>
+    </div>
+    <div class="seo"><b>SEO angle:</b> a misconfigured CDN cache can serve Googlebot a stale version of a page — old title tags, old content, even an old noindex — long after you've published a fix, because the crawler is hitting the edge cache, not your live origin.</div>
+    <div class="sources">
+      <a href="https://developer.chrome.com/docs/devtools/network/reference#server-timing" target="_blank" rel="noopener">Chrome DevTools — Server-Timing</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "what is a CDN" / "how does a CDN work"</div>
+          <div class="vmeta"><span class="badge official">Official</span></div>
+          <div class="watchfor">While watching, note: how a CDN decides whether to serve a cached copy or fetch a fresh one from the origin.</div>
+          <a class="vlink" href="https://www.youtube.com/@Cloudflare/search?query=how%20does%20a%20cdn%20work" target="_blank" rel="noopener">Search on Cloudflare →</a>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "reverse proxy explained" / "Nginx vs Apache"</div>
+          <div class="vmeta"><span class="badge established">Established educator</span></div>
+          <div class="watchfor">While watching, note: one concrete job a reverse proxy does that the origin server itself is not doing.</div>
+          <a class="vlink" href="https://www.youtube.com/@NetworkChuck/search?query=reverse%20proxy%20explained" target="_blank" rel="noopener">Search on NetworkChuck →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab">
+    <h3>Lab 5 — Time the connection, inspect the certificate, spot the CDN</h3>
+    <ol>
+      <li>Run <code>curl -w "DNS: %{time_namelookup}s | Connect: %{time_connect}s | TLS: %{time_appconnect}s | TTFB: %{time_starttransfer}s | Total: %{time_total}s\n" -o /dev/null -s https://example.com</code> (use your own domain) and record each value.</li>
+      <li>In Chrome, click the padlock icon → Connection is secure → Certificate is valid, and note the certificate authority and expiry date.</li>
+      <li>Check response headers in DevTools (Network → your request → Headers) for CDN clues: <code>cf-ray</code>, <code>x-served-by</code>, <code>x-cache</code>, or a <code>server</code> header naming the CDN.</li>
+      <li>Repeat the <code>curl</code> timing command for your homepage and one competitor article; compare TTFB.</li>
+    </ol>
+    <div class="deliverable"><b>Keep for Day 7:</b> the curl timing breakdown, certificate details, and any CDN header evidence.</div>
+  </div>
+
+  <details class="q"><summary>Check question 1 — What are the three legs of the TCP handshake?</summary><div class="a">SYN, SYN-ACK, ACK.</div></details>
+  <details class="q"><summary>Check question 2 — What does a TLS certificate actually prove?</summary><div class="a">That the server is who it claims to be (verified by a trusted certificate authority), and enables encryption — it says nothing about the content's quality or safety.</div></details>
+  <details class="q"><summary>Check question 3 — Why might Googlebot see an outdated version of a page after you've fixed it?</summary><div class="a">If it's hitting a CDN edge cache rather than the live origin, it can receive a stale cached copy until that cache expires or is purged.</div></details>
+</section>
+
+<!-- ============ DAY 6 ============ -->
+<section class="day" id="day-6">
+  <span class="daytag">Day 6 <span class="time">3 h</span></span>
+  <h2>DevTools, nslookup and dig</h2>
+  <p class="lede">You've read the theory. Today is pure tool practice: measure every phase of the journey yourself, on three real URLs, and reconcile what each tool tells you.</p>
+
+  <div class="topic">
+    <h3><span class="n">6.1</span> Chrome DevTools — the Network panel</h3>
+    <div class="explain">
+      <p>Open DevTools (<code>F12</code> or right-click → Inspect) → <b>Network</b> tab → reload the page. Each row is one request. Click a request's <b>Timing</b> sub-tab to see the exact same phases from Day 1: Queueing, DNS Lookup, Initial Connection, SSL/TLS, Request sent, Waiting (TTFB), Content Download. The <b>Headers</b> tab shows request/response headers (status code, caching directives, server info). The bottom summary bar shows total requests, transferred size, and load time.</p>
+    </div>
+    <div class="seo"><b>SEO angle:</b> this is the single fastest way to confirm, with your own eyes, whether a reported "slow page" complaint is a DNS problem, a connection problem, a slow server, or just a heavy page — each shows up as a different-colored bar in the same panel.</div>
+    <div class="sources">
+      <a href="https://developer.chrome.com/docs/devtools/network" target="_blank" rel="noopener">Chrome DevTools — Network panel documentation</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "Chrome DevTools Network panel tutorial"</div>
+          <div class="vmeta"><span class="badge official">Official</span></div>
+          <div class="watchfor">While watching, note: what the "Waiting (TTFB)" phase specifically measures, and what it does not include.</div>
+          <a class="vlink" href="https://www.youtube.com/@ChromeDevs/search?query=network%20panel" target="_blank" rel="noopener">Search on Chrome for Developers →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic">
+    <h3><span class="n">6.2</span> nslookup and dig, side by side</h3>
+    <div class="explain">
+      <p><code>nslookup</code> is simpler and available everywhere (including plain Windows). <code>dig</code> gives far more detail — full TTLs, the exact query and response sections, and a <code>+trace</code> mode that shows the whole root-to-authoritative chain from Day 3. Both do the same underlying job: ask a resolver a DNS question.</p>
+    </div>
+    <div class="sources">
+      <a href="https://man7.org/linux/man-pages/man1/dig.1.html" target="_blank" rel="noopener">dig — man page</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "dig command tutorial" / "nslookup vs dig"</div>
+          <div class="vmeta"><span class="badge established">Established educator</span></div>
+          <div class="watchfor">While watching, note: one piece of information dig's output gives you that nslookup's default output does not.</div>
+          <a class="vlink" href="https://www.youtube.com/@NetworkChuck/search?query=dig%20command%20tutorial" target="_blank" rel="noopener">Search on NetworkChuck →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab">
+    <h3>Lab 6 — Measure three URLs with all three tools</h3>
+    <ol>
+      <li>Pick your article, your homepage, and one competitor article.</li>
+      <li>For each: capture the DevTools <b>Timing</b> breakdown (screenshot), the <code>nslookup</code> result, and the <code>dig</code> result (including the TTL).</li>
+      <li>Build a simple table: URL | DNS time | Connect time | TLS time | TTFB | Download time | Total.</li>
+      <li>Reconcile: does the IP address <code>dig</code> returns match what DevTools implies the browser connected to? (Check the <b>Remote Address</b> field under the request's Headers tab.)</li>
+    </ol>
+    <div class="deliverable"><b>Keep for Day 7:</b> the completed comparison table across all three URLs — this becomes the core evidence in your report.</div>
+  </div>
+
+  <details class="q"><summary>Check question 1 — In DevTools, which Timing phase corresponds to TTFB?</summary><div class="a">"Waiting" (sometimes labeled TTFB) — the gap between the request being fully sent and the first byte of the response arriving.</div></details>
+  <details class="q"><summary>Check question 2 — What can dig +trace show you that a plain dig query can't?</summary><div class="a">The full chain of queries from the root servers down through the TLD servers to the authoritative nameservers.</div></details>
+  <details class="q"><summary>Check question 3 — Where in DevTools do you confirm which IP address the browser actually connected to?</summary><div class="a">The Headers tab of the request, under "Remote Address."</div></details>
+</section>
+
+<!-- ============ DAY 7 ============ -->
+<section class="day" id="day-7">
+  <span class="daytag">Day 7 <span class="time">3.5 h</span></span>
+  <h2>SEO impact and your report</h2>
+  <p class="lede">Bring it all together: how this whole journey looks from Googlebot's point of view, what TTFB really means for rankings and crawl budget, and then write it up.</p>
+
+  <div class="topic">
+    <h3><span class="n">7.1</span> How Googlebot experiences the journey</h3>
+    <div class="explain">
+      <p>Googlebot follows the exact same journey you've studied all week: DNS resolution, TCP connect, TLS, request, response — using Google's own infrastructure and resolvers, which is why its cache timing can differ from yours. Google adjusts its <b>crawl rate</b> based on how your server responds: consistent errors, timeouts, or slow responses cause Google to crawl more cautiously (and less), which can slow down discovery and re-indexing of new or updated content.</p>
+      <p>This whole plan stops exactly where the server starts to answer — everything from here (status codes, headers, HTML, rendering, JavaScript execution) is a separate stage that determines what Googlebot does with the response, not whether it can get one at all.</p>
+    </div>
+    <div class="seo"><b>SEO angle:</b> "crawl budget" problems are frequently blamed on content structure when the real bottleneck is server response time or DNS reliability — this week's whole toolkit (dig, curl timing, DevTools) is how you tell the difference before proposing a fix.</div>
+    <div class="sources">
+      <a href="https://developers.google.com/search/docs/crawling-indexing/googlebot" target="_blank" rel="noopener">Google — Googlebot overview</a>
+      <a href="https://developers.google.com/search/docs/crawling-indexing/large-site-managing-crawl-budget" target="_blank" rel="noopener">Google — Crawl budget management</a>
+    </div>
+    <div class="videos">
+      <div class="vcard">
+        <div class="play">▶</div>
+        <div class="vbody">
+          <div class="vtitle">Search: "how Googlebot crawls" / "crawl budget explained"</div>
+          <div class="vmeta"><span class="badge official">Official</span></div>
+          <div class="watchfor">While watching, note: does Google describe server response time as a direct factor in crawl rate, and if so, how?</div>
+          <a class="vlink" href="https://www.youtube.com/@GoogleSearchCentral/search?query=crawl%20budget" target="_blank" rel="noopener">Search on Google Search Central →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic">
+    <h3><span class="n">7.2</span> TTFB in context</h3>
+    <div class="explain">
+      <p>TTFB (Time to First Byte) is the gap between the request being sent and the first byte of the response arriving — it wraps up everything from Day 5's TCP/TLS handshakes through however long your server (or CDN cache) took to generate or fetch the response. It's a diagnostic number, not itself a Core Web Vital, but a high TTFB makes it much harder to hit good <b>Largest Contentful Paint</b> scores, because nothing on the page can render before the first byte lands.</p>
+    </div>
+    <div class="sources">
+      <a href="https://web.dev/articles/ttfb" target="_blank" rel="noopener">web.dev — Time to First Byte (TTFB)</a>
+    </div>
+  </div>
+
+  <div class="lab">
+    <h3>Lab 7 — Write and deliver the URL journey report</h3>
+    <p>Using everything you kept from Labs 1–6, write a short report (2–4 pages) for one of your own articles. Suggested structure:</p>
+    <ol>
+      <li><b>URL anatomy</b> — the breakdown from Lab 1.</li>
+      <li><b>DNS layer</b> — resolver used, TTL, full record inventory from Labs 2–4, www/apex redirect status.</li>
+      <li><b>Connection layer</b> — TCP/TLS timing and certificate details from Lab 5.</li>
+      <li><b>Measured performance</b> — the comparison table from Lab 6, across your article, your homepage, and a competitor.</li>
+      <li><b>Findings</b> — in plain language, where is the time going, and is anything actually broken or risky (expiring cert, missing record, unusually long DNS or TTFB)?</li>
+      <li><b>Recommendations</b> — concrete, prioritized actions (e.g. "lower TTL to X before the planned migration," "investigate TTFB on the CDN vs. origin," "consolidate www/non-www").</li>
+    </ol>
+    <div class="deliverable"><b>Final deliverable:</b> the written report itself, ready to share with a developer or client — this is proof you can now diagnose the full URL-to-server journey on a real site.</div>
+  </div>
+
+  <details class="q"><summary>Check question 1 — Does Googlebot use the same journey (DNS → TCP → TLS → request → response) as a browser?</summary><div class="a">Yes — the same underlying network journey, though using Google's own resolvers and infrastructure, which can have different cache timing than yours.</div></details>
+  <details class="q"><summary>Check question 2 — Is TTFB itself a Core Web Vital?</summary><div class="a">No, but it directly constrains how early content can start rendering, which affects Core Web Vitals like Largest Contentful Paint.</div></details>
+  <details class="q"><summary>Check question 3 — Where does this plan's scope end?</summary><div class="a">At the moment the server starts to answer — HTTP status codes, headers, caching, rendering and JavaScript SEO are the next stage, not covered here.</div></details>
+</section>
+
+<!-- ============ CHEAT SHEET ============ -->
+<section class="cheat" id="cheatsheet">
+  <h2>Cheat sheet — commands and quick reference</h2>
+
+  <h3>nslookup</h3>
+  <pre class="cmd">nslookup example.com                 # A record + resolver used
+nslookup -type=AAAA example.com      # IPv6 address
+nslookup -type=MX example.com        # mail servers
+nslookup -type=TXT example.com       # TXT records (verification, SPF)
+nslookup -type=NS example.com        # authoritative nameservers</pre>
+
+  <h3>dig (macOS / Linux / WSL)</h3>
+  <pre class="cmd">dig example.com                      # A record + TTL, answer section
+dig example.com AAAA                 # IPv6
+dig example.com MX
+dig example.com TXT
+dig example.com NS
+dig example.com +trace               # full root -> TLD -> authoritative chain
+dig example.com +short               # just the answer, no extra output</pre>
+
+  <h3>curl timing</h3>
+  <pre class="cmd">curl -w "DNS: %{time_namelookup}s | Connect: %{time_connect}s | TLS: %{time_appconnect}s | TTFB: %{time_starttransfer}s | Total: %{time_total}s\n" -o /dev/null -s https://example.com</pre>
+
+  <h3>The journey, one line each</h3>
+  <div class="wrap-x">
+  <table class="data">
+    <thead><tr><th>Phase</th><th>What's happening</th><th>Where you see it</th></tr></thead>
+    <tbody>
+      <tr><td>URL &amp; caches</td><td>Browser parses the URL, checks its own caches for shortcuts</td><td>DevTools → Timing → Queueing</td></tr>
+      <tr><td>DNS lookup</td><td>Resolve host → IP address via resolver chain</td><td>DevTools → DNS Lookup; <code>nslookup</code>/<code>dig</code></td></tr>
+      <tr><td>TCP connect</td><td>Three-way handshake establishes a reliable connection</td><td>DevTools → Initial Connection</td></tr>
+      <tr><td>TLS</td><td>Certificate presented, encryption negotiated (HTTPS only)</td><td>DevTools → SSL; padlock icon</td></tr>
+      <tr><td>Server (TTFB)</td><td>Server/CDN processes the request and starts responding</td><td>DevTools → Waiting (TTFB); <code>curl -w</code></td></tr>
+      <tr><td>Download</td><td>Response body streams to the browser</td><td>DevTools → Content Download</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Who to check when something breaks</h3>
+  <div class="wrap-x">
+  <table class="data">
+    <thead><tr><th>Symptom</th><th>Layer to check first</th></tr></thead>
+    <tbody>
+      <tr><td>Site doesn't resolve at all (NXDOMAIN)</td><td>DNS — registrar/nameserver configuration</td></tr>
+      <tr><td>"Connection timed out"</td><td>Server/firewall — origin or CDN reachability</td></tr>
+      <tr><td>Certificate warning</td><td>TLS — expired/misconfigured certificate, CAA record</td></tr>
+      <tr><td>Slow TTFB, fast download</td><td>Server/application, or CDN cache miss to origin</td></tr>
+      <tr><td>Search Console shows old content after a fix</td><td>CDN edge cache, or Googlebot's own DNS/resolver cache TTL</td></tr>
+      <tr><td>www and non-www both return 200</td><td>Server-level or DNS-level redirect missing</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <p>Built for a 7-day, self-paced study plan (~20 hours total). Primary sources (RFCs, Google, Chrome, MDN, Cloudflare, ICANN) are the authority throughout — treat every video as orientation and verify against them. Video links point to channel searches rather than fixed video IDs so you always land on the newest, still-live upload; always run the vetting checklist above before trusting what you watch.</p>
+</footer>
+
+</main>
+
+<script>
+(function(){
+  var toggle = document.getElementById('themeToggle');
+  var root = document.documentElement;
+  function apply(mode){
+    if(mode){ root.setAttribute('data-theme', mode); } else { root.removeAttribute('data-theme'); }
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('theme'); } catch(e){}
+  if(saved){ apply(saved); }
+  toggle.addEventListener('click', function(){
+    var current = root.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : (current === 'light' ? null : 'dark');
+    apply(next);
+    try { if(next){ localStorage.setItem('theme', next); } else { localStorage.removeItem('theme'); } } catch(e){}
+  });
+})();
+</script>
+</body>
+</html>
